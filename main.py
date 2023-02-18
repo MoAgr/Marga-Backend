@@ -1,8 +1,26 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends,HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from schemas import Data
+import crud
+import models
+
+from sqlalchemy.orm import Session
+
+from database import SessionLocal, engine
+
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 app.add_middleware(
     CORSMiddleware,
@@ -12,16 +30,11 @@ app.add_middleware(
     allow_headers=['*'],    
 )
 
-class Data(BaseModel):
-    greeting:str
+@app.get("/print")
+def get_locations(db: Session = Depends(get_db)):
+    locations=crud.get_items(db)
+    return locations
 
-
-db=[{"Hello":"World"}]
-
-@app.get("/hello")
-def greeting():
-    return db
-
-@app.post("/hello")
-def add_greeting(message:Data):
-    db.append({"Hello":message.greeting})
+@app.post("/create")
+def create_location(loc:Data,db: Session = Depends(get_db)):
+    return crud.create_entry(db,loc)
