@@ -3,7 +3,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:admin@127.0.0.1:3306/testdb"
+# SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:admin@127.0.0.1:3306/testdb"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:MyTfNLSdyPD2h8NWKHrh@containers-us-west-191.railway.app:6947/railway"
+# mysql://root:MyTfNLSdyPD2h8NWKHrh@containers-us-west-191.railway.app:6947/railway
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
