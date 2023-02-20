@@ -137,8 +137,13 @@ def create_location(loc:schemas.Data,db: Session = Depends(get_db)):
     return crud.create_entry(db,loc)
 
 @app.post("/register")
-def register_user(user:schemas.User,db: Session = Depends(get_db)):
-    return crud.create_entry(db,user)
+def register_user(user:schemas.RegisterData,db: Session = Depends(get_db)):
+    pw=user.password
+    hash_pw=get_password_hash(pw)
+
+    user_actual=schemas.UserInDB(username=user.username,email=user.email,full_name=user.full_name,hashed_password=hash_pw)
+
+    return crud.create_user(db,user_actual)
 
 @app.get("/users/me/")
 async def read_users_me(db: Session = Depends(get_db),current_user: schemas.User = Depends(get_current_user)):
