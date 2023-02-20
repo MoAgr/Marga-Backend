@@ -13,7 +13,7 @@ def create_entry(db: Session, user: schemas.Data):
     return db_user
 
 def create_user(db: Session, user: schemas.UserInDB):
-    db_user = models.Userbase(name=user.name, email=user.email,full_name=user.full_name,hashed_password=user.hashed_password)
+    db_user = models.Userbase(username=user.username, email=user.email,full_name=user.full_name,hashed_password=user.hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
