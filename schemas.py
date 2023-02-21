@@ -8,6 +8,9 @@ class Data(BaseModel):
     class Config:
         orm_mode = True 
 
+class UserName(BaseModel):
+    name:str
+
 class RegisterData(BaseModel):
     username:str
     full_name:str

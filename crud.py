@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 import models
 import schemas
 
-def get_user(db: Session, user_id: int):
-    return db.query(models.Test).filter(models.Test.id == user_id).first()
+def get_user(db: Session, username: str):
+    return db.query(models.Userbase).filter(models.Userbase.username == username).first()
 
 def create_entry(db: Session, user: schemas.Data):
     db_user = models.Test(name=user.name, lat=user.lat)
