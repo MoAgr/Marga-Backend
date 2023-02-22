@@ -134,5 +134,3 @@ async def register_user(user:schemas.RegisterData,db: Session = Depends(get_db))
 @app.get("/users/me/")
 async def read_users_me(db: Session = Depends(get_db),current_user: schemas.User = Depends(get_current_user)):
     return crud.get_users(db)
-
-    
