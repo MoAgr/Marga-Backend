@@ -1,6 +1,6 @@
 
 class Node:
-    node_id=1
+    node_id=0
     def __init__(self,lati:str,longi:str,name:str):
         self.latitude=lati
         self.longitude=longi
@@ -48,6 +48,41 @@ class Graph:
     def get_graph(self):
         return self.adj_list
 
+    def printAllPathsUtil(self, u, d, visited, path):
+ 
+        # Mark the current node as visited and store in path
+        visited[u]= True
+        path.append(u)
+ 
+        # If current vertex is same as destination, then print
+        # current path[]
+        if u == d:
+            print (path)
+        else:
+            # If current vertex is not destination
+            # Recur for all the vertices adjacent to this vertex
+            for tup in self.adj_list[u]:
+                (id_no,km,route_no)=tup
+                if visited[id_no]== False:
+                    self.printAllPathsUtil(id_no, d, visited, path)
+                     
+        # Remove current vertex from path[] and mark it as unvisited
+        path.pop()
+        visited[u]= False
+  
+  
+    # Prints all paths from 's' to 'd'
+    def printAllPaths(self, s, d):
+ 
+        # Mark all the vertices as not visited
+        visited =[False]*(len(self.nodes))
+ 
+        # Create an array to store paths
+        path = []
+ 
+        # Call the recursive helper function to print all paths
+        self.printAllPathsUtil(s, d, visited, path)
+
     
 graph=Graph()
 
@@ -83,5 +118,18 @@ graph.add_route([{
       "long": "5.0"
     }])
 
+graph.add_route([
+    {
+      "name": "Chabahil",
+      "lat": "5.0",
+      "long": "5.0"
+    },
+    {
+      "name": "Pulchowk",
+      "lat": "3.0",
+      "long": "3.0"
+    }])
+
 print(graph.get_nodes())
 print(graph.get_graph())
+graph.printAllPaths(0,2)
