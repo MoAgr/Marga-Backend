@@ -1,3 +1,4 @@
+import copy
 
 class Node:
     node_id=0
@@ -10,6 +11,7 @@ class Node:
 
 class Graph:
     route_no=1
+    paths=[]
     def __init__(self):
         self.adj_list={}
         self.nodes=[]
@@ -47,24 +49,39 @@ class Graph:
 
     def get_graph(self):
         return self.adj_list
+    
+    def find_km(self,source,destination):
+        neighbours=copy.deepcopy(self.adj_list[source])
+        for neighbour in neighbours:
+            (id_no,km,route_no)=neighbour
+            if id_no==destination:
+                return km
+            
+    def get_route_no(self,source,destination):
+        neighbours=copy.deepcopy(self.adj_list[source])
+        for neighbour in neighbours:
+            (id_no,km,route_no)=neighbour
+            if id_no==destination:
+                return route_no
 
-    def printAllPathsUtil(self, u, d, visited, path):
- 
+    def print_all_paths_util(self, u, d, visited, path):
+
         # Mark the current node as visited and store in path
         visited[u]= True
         path.append(u)
- 
+
         # If current vertex is same as destination, then print
         # current path[]
         if u == d:
-            print (path)
+            temp_path=copy.deepcopy(path)
+            self.paths.append(temp_path)
         else:
             # If current vertex is not destination
             # Recur for all the vertices adjacent to this vertex
             for tup in self.adj_list[u]:
                 (id_no,km,route_no)=tup
                 if visited[id_no]== False:
-                    self.printAllPathsUtil(id_no, d, visited, path)
+                    self.print_all_paths_util(id_no, d, visited, path)
                      
         # Remove current vertex from path[] and mark it as unvisited
         path.pop()
@@ -72,7 +89,7 @@ class Graph:
   
   
     # Prints all paths from 's' to 'd'
-    def printAllPaths(self, s, d):
+    def get_all_paths(self, s, d):
  
         # Mark all the vertices as not visited
         visited =[False]*(len(self.nodes))
@@ -81,7 +98,35 @@ class Graph:
         path = []
  
         # Call the recursive helper function to print all paths
-        self.printAllPathsUtil(s, d, visited, path)
+        self.print_all_paths_util(s, d, visited, path)
+
+        paths=copy.deepcopy(self.paths)
+        self.paths=[]
+        return paths
+    
+    def get_sorted_paths(self,s,d):
+        paths=copy.deepcopy(self.get_all_paths(s,d))
+        sorted_paths=[]
+        
+        for path in paths:
+            km=0
+            change=0
+            curr_route=0
+            for pos in range(len(path)-1):
+                km+=self.find_km(path[pos],path[pos+1])
+                if(curr_route==0):
+                    curr_route=self.get_route_no(path[pos],path[pos+1])
+                elif(curr_route!=self.get_route_no(path[pos],path[pos+1])):
+                    change+=1
+                    curr_route=self.get_route_no(path[pos],path[pos+1])
+            temp_dict={}
+            temp_dict["Route"]=path
+            temp_dict["Details"]={"km":km,"change":change}
+            sorted_paths.append(temp_dict)
+        
+        return sorted_paths
+                    
+
 
     
 graph=Graph()
@@ -132,4 +177,4 @@ graph.add_route([
 
 print(graph.get_nodes())
 print(graph.get_graph())
-graph.printAllPaths(0,2)
+print(graph.get_sorted_paths(0,2))
