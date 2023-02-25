@@ -10,6 +10,7 @@ from passlib.context import CryptContext
 import schemas
 import crud
 import models
+import graph
 
 from sqlalchemy.orm import Session
 
@@ -26,6 +27,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 models.Base.metadata.create_all(bind=engine)
+
+main_graph=graph.Graph()
 
 app = FastAPI()
 
@@ -131,6 +134,28 @@ async def register_user(user:schemas.RegisterData,db: Session = Depends(get_db))
 
     return crud.create_user(db,user_actual)
 
+@app.post("/addroute")
+async def add_route(route:list,db: Session = Depends(get_db)):
+    return main_graph.add_route(db,route)
+
+@app.post("/addnode")
+async def add_node(node:schemas.Node,db: Session = Depends(get_db)):
+    print(main_graph)
+    return main_graph.add_node(node.lat,node.longi,node.name,db)
+
 @app.get("/users/me/")
 async def read_users_me(db: Session = Depends(get_db),current_user: schemas.User = Depends(get_current_user)):
     return crud.get_users(db)
+
+@app.get("/getnodes")
+async def get_nodes(db: Session = Depends(get_db)):
+    print(main_graph)
+    return main_graph.get_nodes(db)
+
+@app.post("/addedge")
+async def add_edge(edge:schemas.Edge,db: Session = Depends(get_db)):
+    return main_graph.add_edge(db,edge.source,edge.dest,edge.km,edge.route_no)
+
+@app.get("/getadjlist")
+async def get_adj(db: Session = Depends(get_db)):
+   return crud.get_adjlist(db,1)

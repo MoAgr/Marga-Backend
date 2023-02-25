@@ -37,3 +37,19 @@ class User(BaseModel):
 
 class UserInDB(User):
     hashed_password: str
+
+class AddRouteData(BaseModel):
+    name:str
+    vehicleType:str
+    route:List
+
+class Node(BaseModel):
+    name:str
+    lat:str
+    longi:str
+
+class Edge(BaseModel):
+    source:int
+    dest:int
+    km:float
+    route_no:int
