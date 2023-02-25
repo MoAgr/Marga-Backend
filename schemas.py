@@ -45,8 +45,8 @@ class AddRouteData(BaseModel):
 
 class Node(BaseModel):
     name:str
-    lat:str
-    longi:str
+    lat:float
+    longi:float
 
 class Edge(BaseModel):
     source:int

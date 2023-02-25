@@ -1,4 +1,4 @@
-from sqlalchemy import Column, FetchedValue, Integer, String,JSON
+from sqlalchemy import Column, FetchedValue, Integer, String,JSON,Float
 from sqlalchemy.ext.mutable import MutableList
 
 from database import Base
@@ -34,8 +34,8 @@ class Nodes(Base):
     id = Column(Integer, primary_key=True, index=True)
     node_id = Column(Integer)
     name = Column(String(200))
-    lat = Column(String(200))
-    longi=Column(String(200))
+    lat = Column(Float)
+    longi=Column(Float)
 
 class AdjList(Base):
     __tablename__ = "adjlist"
@@ -47,5 +47,5 @@ class AdjList(Base):
 class Coords(Base):
     __tablename__="coords"
     id = Column(Integer, primary_key=True)
-    lat = Column(String(200))
-    longi=Column(String(200))
+    lat = Column(Float)
+    longi=Column(Float)
