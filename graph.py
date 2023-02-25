@@ -17,6 +17,7 @@ class Graph:
     paths=[]
     def __init__(self,db:Session):
         Graph.route_no=len(crud.get_all_routes(db))+1
+        Graph.paths=[]
 
     def add_node(self,lati:str,longi:str,name:str,db:Session):
         node=Node(db,lati,longi,name)
@@ -104,7 +105,7 @@ class Graph:
         # current path[]
         if u == d:
             temp_path=copy.deepcopy(path)
-            self.paths.append(temp_path)
+            Graph.paths.append(temp_path)
         else:
             # If current vertex is not destination
             # Recur for all the vertices adjacent to this vertex
@@ -125,7 +126,7 @@ class Graph:
     def get_all_paths(self,db, s, d):
  
         # Mark all the vertices as not visited
-        print("TOTAL NODES=",len(self.get_nodes(db)))
+        # print("TOTAL NODES=",len(self.get_nodes(db)))
         visited =[False]*(len(self.get_nodes(db)))
  
         # Create an array to store paths
@@ -134,17 +135,15 @@ class Graph:
         # Call the recursive helper function to print all paths
         self.print_all_paths_util(db,s, d, visited, path)
 
-        paths=copy.deepcopy(self.paths)
-        self.paths=[]
+        paths=copy.deepcopy(Graph.paths)
+        Graph.paths=[]
+        # print("get_all_paths",paths)
         return paths
     
     def get_sorted_paths(self,db:Session,s,d):
         paths=copy.deepcopy(self.get_all_paths(db,s,d))
         sorted_paths=[]
         # all_route_details=crud.get_all_routes(db)
-
-
-        
         for path in paths:
             km=0
             change=0
@@ -198,6 +197,7 @@ class Graph:
             temp_dict["details"]={"km":km,"change":change}
             sorted_paths.append(temp_dict)
         
+        # print("get_sorted_paths",sorted_paths)
         return sorted_paths
                     
 
