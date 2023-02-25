@@ -178,7 +178,7 @@ class Graph:
                 returned_node=crud.get_node(db,node_id)
                 temp_node={}
                 temp_node["lat"]=copy.deepcopy(returned_node.lat)
-                temp_node["lng"]=copy.deepcopy(returned_node.longi)
+                temp_node["lng"]=copy.deepcopy(returned_node.lng)
                 temp_node["stopName"]=copy.deepcopy(returned_node.name)
                 path_dets.append(temp_node)
             

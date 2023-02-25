@@ -43,14 +43,14 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Userbase).offset(skip).limit(limit).all()
 
 def add_node(db:Session,node:schemas.Node):
-    db_node = models.Nodes(node_id=node.node_id,name=node.name,lat=node.latitude,longi=node.longitude)
+    db_node = models.Nodes(node_id=node.node_id,name=node.name,lat=node.latitude,lng=node.longitude)
     db.add(db_node)
     db.commit()
     db.flush()
     return db_node
 
 def get_node_by_latlong(db:Session,lat,longi):
-    return db.query(models.Nodes).filter(models.Nodes.lat == lat,models.Nodes.longi == longi).first()
+    return db.query(models.Nodes).filter(models.Nodes.lat == lat,models.Nodes.lng == longi).first()
 
 def get_node(db:Session,node_id):
     return db.query(models.Nodes).filter(models.Nodes.node_id == node_id).first()
@@ -59,14 +59,14 @@ def get_nodes(db:Session,skip: int = 0, limit: int = 100):
     return db.query(models.Nodes).offset(skip).limit(limit).all()
 
 def add_coord(db:Session,lat,longi):
-    db_coord = models.Coords(lat=lat,longi=longi)
+    db_coord = models.Coords(lat=lat,lng=longi)
     db.add(db_coord)
     db.commit()
     db.flush()
     return db_coord
 
 def has_coord(db:Session,lat,longi):
-    db_coord = db.query(models.Coords).filter(models.Coords.lat == lat,models.Coords.longi == longi ).first()
+    db_coord = db.query(models.Coords).filter(models.Coords.lat == lat,models.Coords.lng == longi ).first()
     if db_coord is None:
         return False
     return True
@@ -75,7 +75,7 @@ def get_node_in_range(db:Session,lat_range,longi_range):
     lat_range_lower,lat_range_higher=lat_range
     longi_range_lower,longi_range_higher=longi_range
     db_range = db.query(models.Nodes).filter(models.Nodes.lat>=lat_range_lower,models.Nodes.lat<=lat_range_higher,
-                                             models.Nodes.longi>=longi_range_lower,models.Nodes.longi<=longi_range_higher).all()
+                                             models.Nodes.lng>=longi_range_lower,models.Nodes.lng<=longi_range_higher).all()
     return db_range
 
 def add_to_adjlist(db:Session,node_id,adj_list):
