@@ -5,10 +5,11 @@ import crud
 class Node:
     node_id=0
     def __init__(self,lati:str,longi:str,name:str):
+        print("NODEEEEE:",Node.node_id)
         self.latitude=lati
         self.longitude=longi
         self.name=name
-        self.node_id=Node.node_id
+        self.node_id=copy.deepcopy(Node.node_id)
         Node.node_id=Node.node_id+1 
 
 class Graph:
@@ -50,13 +51,16 @@ class Graph:
         # self.adj_list[source_id].append((dest_id,km,route_no))
         # self.adj_list[dest_id].append((source_id,km,route_no))
 
-    def add_route(self,db:Session,route): 
+    def add_route(self,db:Session,name,yatayat,vehicle_types,route): 
         route_nodes=[]
+        yatayat_str=','.join(yatayat)
+        vehicle_str=','.join(vehicle_types)
+        crud.add_route_details(db,self.route_no,name,yatayat_str,vehicle_str)
         for curr_node in route:
-            if crud.has_coord(db,curr_node["lat"],curr_node["long"]):
-                route_nodes.append(crud.get_node_by_latlong(db,curr_node["lat"],curr_node["long"]))
+            if crud.has_coord(db,curr_node["lat"],curr_node["lng"]):
+                route_nodes.append(crud.get_node_by_latlong(db,curr_node["lat"],curr_node["lng"]))
             else:
-                route_nodes.append(self.add_node(curr_node["lat"],curr_node["long"],curr_node["name"],db))
+                route_nodes.append(self.add_node(curr_node["lat"],curr_node["lng"],curr_node["name"],db))
         
         for pos in range(len(route_nodes)-1):
             self.add_edge(db,route_nodes[pos].node_id,route_nodes[pos+1].node_id,pos,self.route_no) # ?change km to data received from api between this and next node or get km data in each node

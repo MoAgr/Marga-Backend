@@ -95,3 +95,10 @@ def update_adjlist(db:Session,node_id,new_adj_list):
     db.commit()
     db.refresh(db_adj)
     return db_adj
+
+def add_route_details(db:Session,route_no,name,yatayat,vehicle_types):
+    db_route = models.RouteDetails(route_id=route_no,name=name,yatayat=yatayat,vehicle_types=vehicle_types)
+    db.add(db_route)
+    db.commit()
+    db.flush()
+    return db_route

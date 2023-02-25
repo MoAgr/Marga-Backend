@@ -1,4 +1,5 @@
 from sqlalchemy import Column, FetchedValue, Integer, String,JSON
+from sqlalchemy.ext.mutable import MutableList
 
 from database import Base
 
@@ -23,13 +24,15 @@ class RouteDetails(Base):
     __tablename__ = "routedetails"
 
     route_id = Column(Integer, primary_key=True)
-    name = Column(String(20))
-    vehicle_type = Column(String(20))
+    name = Column(String(50))
+    vehicle_types = Column(String(200))
+    yatayat=Column(String(200))
 
 class Nodes(Base):
     __tablename__ = "nodes"
 
-    node_id = Column(Integer, primary_key=True,index=True,server_default=FetchedValue())
+    id = Column(Integer, primary_key=True, index=True)
+    node_id = Column(Integer)
     name = Column(String(20))
     lat = Column(String(20))
     longi=Column(String(50))
@@ -37,11 +40,12 @@ class Nodes(Base):
 class AdjList(Base):
     __tablename__ = "adjlist"
 
-    node_id = Column(Integer, primary_key=True,index=True)
+    id = Column(Integer, primary_key=True, index=True)
+    node_id = Column(Integer)
     adj_list=Column(JSON) #key: node_no, value: array of arrays for adjacency list
 
 class Coords(Base):
     __tablename__="coords"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     lat = Column(String(20))
     longi=Column(String(50))
