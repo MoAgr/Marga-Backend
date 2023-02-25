@@ -149,6 +149,7 @@ class Graph:
             route_nos=[]
             yatayat=[]
             vehicles=[]
+            changes=[]
             for pos in range(len(path)-1):
                 km+=self.find_km(db,path[pos],path[pos+1])
                 route_no=self.get_route_no(db,path[pos],path[pos+1])
@@ -157,6 +158,7 @@ class Graph:
                     route_nos.append(route_no)
                 elif(curr_route!=route_no):
                     change+=1
+                    changes.append(path[pos])
                     curr_route=route_no
                     route_nos.append(route_no)
 
@@ -180,6 +182,11 @@ class Graph:
                 temp_node["lat"]=copy.deepcopy(returned_node.lat)
                 temp_node["lng"]=copy.deepcopy(returned_node.lng)
                 temp_node["stopName"]=copy.deepcopy(returned_node.name)
+                if node_id in changes:
+                    temp_node["change"]=True
+                else:
+                    temp_node["change"]=False
+                    
                 path_dets.append(temp_node)
             
             temp_dict["yatayat"]=yatayat
