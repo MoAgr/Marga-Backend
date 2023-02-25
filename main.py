@@ -95,7 +95,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*', 'localhost:8100'],
+    allow_origins=['*', 'localhost:8100','https://lustrous-zabaione-7b06cf.netlify.app/'],
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],    
