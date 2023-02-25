@@ -8,23 +8,23 @@ class Test(Base):
     __tablename__ = "test2"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(20))
-    lat = Column(String(20),unique=True)
+    name = Column(String(200))
+    lat = Column(String(200),unique=True)
 
 class Userbase(Base):
     __tablename__ = "userbase"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(20),unique=True)
-    email = Column(String(20),unique=True)
-    full_name=Column(String(50))
-    hashed_password=Column(String(100))
+    username = Column(String(200),unique=True)
+    email = Column(String(200),unique=True)
+    full_name=Column(String(200))
+    hashed_password=Column(String(200))
 
 class RouteDetails(Base):
     __tablename__ = "routedetails"
 
     route_id = Column(Integer, primary_key=True)
-    name = Column(String(50))
+    name = Column(String(200))
     vehicle_types = Column(String(200))
     yatayat=Column(String(200))
 
@@ -33,9 +33,9 @@ class Nodes(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     node_id = Column(Integer)
-    name = Column(String(20))
-    lat = Column(String(20))
-    longi=Column(String(50))
+    name = Column(String(200))
+    lat = Column(String(200))
+    longi=Column(String(200))
 
 class AdjList(Base):
     __tablename__ = "adjlist"
@@ -47,5 +47,5 @@ class AdjList(Base):
 class Coords(Base):
     __tablename__="coords"
     id = Column(Integer, primary_key=True)
-    lat = Column(String(20))
-    longi=Column(String(50))
+    lat = Column(String(200))
+    longi=Column(String(200))
