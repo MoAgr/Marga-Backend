@@ -60,7 +60,7 @@ class Graph:
             if crud.has_coord(db,curr_node["lat"],curr_node["lng"]):
                 route_nodes.append(crud.get_node_by_latlong(db,curr_node["lat"],curr_node["lng"]))
             else:
-                route_nodes.append(self.add_node(curr_node["lat"],curr_node["lng"],curr_node["name"],db))
+                route_nodes.append(self.add_node(curr_node["lat"],curr_node["lng"],curr_node["stopName"],db))
         
         for pos in range(len(route_nodes)-1):
             self.add_edge(db,route_nodes[pos].node_id,route_nodes[pos+1].node_id,pos,self.route_no) # ?change km to data received from api between this and next node or get km data in each node
