@@ -75,7 +75,7 @@ def get_node_in_range(db:Session,lat_range,longi_range):
     lat_range_lower,lat_range_higher=lat_range
     longi_range_lower,longi_range_higher=longi_range
     db_range = db.query(models.Nodes).filter(models.Nodes.lat>=lat_range_lower,models.Nodes.lat<=lat_range_higher,
-                                             models.Nodes.lng>=longi_range_lower,models.Nodes.lng<=longi_range_higher).all()
+                                             models.Nodes.lng>=longi_range_lower,models.Nodes.lng<=longi_range_higher).first()
     return db_range
 
 def add_to_adjlist(db:Session,node_id,adj_list):
