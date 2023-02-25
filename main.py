@@ -147,10 +147,45 @@ async def add_route(route_details:dict,db: Session = Depends(get_db)):
 # async def read_users_me(db: Session = Depends(get_db),current_user: schemas.User = Depends(get_current_user)):
 #     return crud.get_users(db)
 
-# @app.get("/getnodes")
-# async def get_nodes(db: Session = Depends(get_db)):
-#     print(main_graph)
-#     return main_graph.get_nodes(db)
+@app.get("/getnodes")
+async def get_nodes(db: Session = Depends(get_db)):
+    return main_graph.get_nodes(db)
+
+@app.get("/getroutes")
+async def get_routes(data:schemas.ipRoute,db: Session = Depends(get_db)):
+    # start:schemas.ipRoute,end:schemas.ipRoute
+    # #input-> endpoint pairs
+    # #decide u[] with start endpoints (1km radius maybe)
+    # #decide d[] with end endpoints (1km radius)
+    # start_lat_range=(start.lat-0.007,start.lat+0.007)
+    # end_lat_range=(end.lat-0.007,end.lat+0.007)
+
+    # start_lng_range=(start.lng-0.0065,start.lng+0.0065)
+    # end_lng_range=(end.lng-0.0065,end.lng+0.0065)
+
+    # start_nodes=crud.get_node_in_range(db,start_lat_range,start_lng_range)    
+    # end_nodes=crud.get_node_in_range(db,end_lat_range,end_lng_range)
+
+    # start_node_ids=[]
+    # end_node_ids=[]
+
+    # for i in start_nodes:
+    #     start_node_ids.append(i.node_id)
+    # for i in end_nodes:
+    #     end_node_ids.append(i.node_id)
+
+    # print(start_node_ids)
+    # print(end_node_ids)
+    # final_routes=[]
+    # # call below function for i in u-> for j in d, and join the obtained lists
+    # for node_start in start_node_ids:
+    #     for node_end in end_node_ids:
+    #         final_routes.append(main_graph.get_sorted_paths(db,node_start,node_end))
+    
+    # return final_routes
+    return main_graph.get_sorted_paths(db,data.start,data.end)
+
+
 
 # @app.post("/addedge")
 # async def add_edge(edge:schemas.Edge,db: Session = Depends(get_db)):

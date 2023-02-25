@@ -34,8 +34,8 @@ class Nodes(Base):
     id = Column(Integer, primary_key=True, index=True)
     node_id = Column(Integer)
     name = Column(String(200))
-    lat = Column(Float)
-    longi=Column(Float)
+    lat = Column(Float(precision=32))
+    longi=Column(Float(precision=32))
 
 class AdjList(Base):
     __tablename__ = "adjlist"
@@ -47,5 +47,5 @@ class AdjList(Base):
 class Coords(Base):
     __tablename__="coords"
     id = Column(Integer, primary_key=True)
-    lat = Column(Float)
-    longi=Column(Float)
+    lat = Column(Float(precision=32))
+    longi=Column(Float(precision=32))

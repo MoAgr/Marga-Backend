@@ -52,6 +52,9 @@ def add_node(db:Session,node:schemas.Node):
 def get_node_by_latlong(db:Session,lat,longi):
     return db.query(models.Nodes).filter(models.Nodes.lat == lat,models.Nodes.longi == longi).first()
 
+def get_node(db:Session,node_id):
+    return db.query(models.Nodes).filter(models.Nodes.node_id == node_id).first()
+
 def get_nodes(db:Session,skip: int = 0, limit: int = 100):
     return db.query(models.Nodes).offset(skip).limit(limit).all()
 
@@ -67,6 +70,13 @@ def has_coord(db:Session,lat,longi):
     if db_coord is None:
         return False
     return True
+
+def get_node_in_range(db:Session,lat_range,longi_range):
+    lat_range_lower,lat_range_higher=lat_range
+    longi_range_lower,longi_range_higher=longi_range
+    db_range = db.query(models.Nodes).filter(models.Nodes.lat>=lat_range_lower,models.Nodes.lat<=lat_range_higher,
+                                             models.Nodes.longi>=longi_range_lower,models.Nodes.longi<=longi_range_higher).all()
+    return db_range
 
 def add_to_adjlist(db:Session,node_id,adj_list):
     db_adjlist = models.AdjList(node_id=node_id,adj_list=adj_list)
@@ -102,3 +112,9 @@ def add_route_details(db:Session,route_no,name,yatayat,vehicle_types):
     db.commit()
     db.flush()
     return db_route
+
+def get_route_details(db:Session,route_no):
+    return db.query(models.RouteDetails).filter(models.RouteDetails.route_id == route_no).first()
+
+def get_all_routes(db:Session,skip: int = 0, limit: int = 100):
+    return db.query(models.RouteDetails).offset(skip).limit(limit).all()

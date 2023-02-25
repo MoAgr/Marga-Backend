@@ -5,7 +5,6 @@ import crud
 class Node:
     node_id=0
     def __init__(self,lati:str,longi:str,name:str):
-        print("NODEEEEE:",Node.node_id)
         self.latitude=lati
         self.longitude=longi
         self.name=name
@@ -73,81 +72,123 @@ class Graph:
     def get_graph(self,db:Session):
         return crud.get_graph(db)
     
-    # def find_km(self,source,destination):
-    #     neighbours=copy.deepcopy(self.adj_list[source])
-    #     for neighbour in neighbours:
-    #         (id_no,km,route_no)=neighbour
-    #         if id_no==destination:
-    #             return km
+    def find_km(self,db:Session,source,destination):
+        adj_list_source=crud.get_adjlist(db,source)
+        source_neighbours=next(iter(adj_list_source.adj_list.values()))
+        for neighbour in source_neighbours:
+            id_no,km,route_no=neighbour
+            if id_no==destination:
+                return km
             
-    # def get_route_no(self,source,destination):
-    #     neighbours=copy.deepcopy(self.adj_list[source])
-    #     for neighbour in neighbours:
-    #         (id_no,km,route_no)=neighbour
-    #         if id_no==destination:
-    #             return route_no
+    def get_route_no(self,db:Session,source,destination):
+        adj_list_source=crud.get_adjlist(db,source)
+        source_neighbours=next(iter(adj_list_source.adj_list.values()))
+        # print(destination)
+        for neighbour in source_neighbours:
+            # print(neighbour)
+            id_no,km,route_no=neighbour
+            # print(route_no,neighbour[2])
+            if id_no==destination:
+                return route_no
 
-    # def print_all_paths_util(self, u, d, visited, path):
+    def print_all_paths_util(self,db:Session, u, d, visited, path):
 
-    #     # Mark the current node as visited and store in path
-    #     visited[u]= True
-    #     path.append(u)
+        # Mark the current node as visited and store in path
+        visited[u]= True
+        path.append(u)
 
-    #     # If current vertex is same as destination, then print
-    #     # current path[]
-    #     if u == d:
-    #         temp_path=copy.deepcopy(path)
-    #         self.paths.append(temp_path)
-    #     else:
-    #         # If current vertex is not destination
-    #         # Recur for all the vertices adjacent to this vertex
-    #         for tup in self.adj_list[u]:
-    #             (id_no,km,route_no)=tup
-    #             if visited[id_no]== False:
-    #                 self.print_all_paths_util(id_no, d, visited, path)
+        # If current vertex is same as destination, then print
+        # current path[]
+        if u == d:
+            temp_path=copy.deepcopy(path)
+            self.paths.append(temp_path)
+        else:
+            # If current vertex is not destination
+            # Recur for all the vertices adjacent to this vertex
+            adj_list_u=crud.get_adjlist(db,u)
+            u_neighbours=next(iter(adj_list_u.adj_list.values()))
+
+            for neighbour in u_neighbours:
+                id_no,km,route_no=neighbour
+                if visited[id_no]== False:
+                    self.print_all_paths_util(db,id_no, d, visited, path)
                      
-    #     # Remove current vertex from path[] and mark it as unvisited
-    #     path.pop()
-    #     visited[u]= False
+        # Remove current vertex from path[] and mark it as unvisited
+        path.pop()
+        visited[u]= False
   
   
-    # # Prints all paths from 's' to 'd'
-    # def get_all_paths(self, s, d):
+    # Prints all paths from 's' to 'd'
+    def get_all_paths(self,db, s, d):
  
-    #     # Mark all the vertices as not visited
-    #     visited =[False]*(len(self.nodes))
+        # Mark all the vertices as not visited
+        print("TOTAL NODES=",len(self.get_nodes(db)))
+        visited =[False]*(len(self.get_nodes(db)))
  
-    #     # Create an array to store paths
-    #     path = []
+        # Create an array to store paths
+        path = []
  
-    #     # Call the recursive helper function to print all paths
-    #     self.print_all_paths_util(s, d, visited, path)
+        # Call the recursive helper function to print all paths
+        self.print_all_paths_util(db,s, d, visited, path)
 
-    #     paths=copy.deepcopy(self.paths)
-    #     self.paths=[]
-    #     return paths
+        paths=copy.deepcopy(self.paths)
+        self.paths=[]
+        return paths
     
-    # def get_sorted_paths(self,s,d):
-    #     paths=copy.deepcopy(self.get_all_paths(s,d))
-    #     sorted_paths=[]
+    def get_sorted_paths(self,db:Session,s,d):
+        paths=copy.deepcopy(self.get_all_paths(db,s,d))
+        sorted_paths=[]
+        # all_route_details=crud.get_all_routes(db)
+
+
         
-    #     for path in paths:
-    #         km=0
-    #         change=0
-    #         curr_route=0
-    #         for pos in range(len(path)-1):
-    #             km+=self.find_km(path[pos],path[pos+1])
-    #             if(curr_route==0):
-    #                 curr_route=self.get_route_no(path[pos],path[pos+1])
-    #             elif(curr_route!=self.get_route_no(path[pos],path[pos+1])):
-    #                 change+=1
-    #                 curr_route=self.get_route_no(path[pos],path[pos+1])
-    #         temp_dict={}
-    #         temp_dict["Route"]=path
-    #         temp_dict["Details"]={"km":km,"change":change}
-    #         sorted_paths.append(temp_dict)
+        for path in paths:
+            km=0
+            change=0
+            curr_route=0
+            route_nos=[]
+            yatayat=[]
+            vehicles=[]
+            for pos in range(len(path)-1):
+                km+=self.find_km(db,path[pos],path[pos+1])
+                route_no=self.get_route_no(db,path[pos],path[pos+1])
+                if(curr_route==0):
+                    curr_route=route_no
+                    route_nos.append(route_no)
+                elif(curr_route!=route_no):
+                    change+=1
+                    curr_route=route_no
+                    route_nos.append(route_no)
+
+            temp_dict={}
+            path_dets=[]
+
+            for route in route_nos:
+                route_det_json=crud.get_route_details(db,route)
+
+                yatayat_str=copy.deepcopy(route_det_json.yatayat)
+                yatayat_lst=copy.deepcopy(yatayat_str.split(','))
+                vehicles_str=copy.deepcopy(route_det_json.vehicle_types)
+                vehicles_lst=copy.deepcopy(vehicles_str.split(','))
+
+                yatayat.append(yatayat_lst)
+                vehicles.append(vehicles_lst)
+
+            for node_id in path:
+                returned_node=crud.get_node(db,node_id)
+                temp_node={}
+                temp_node["lat"]=copy.deepcopy(returned_node.lat)
+                temp_node["lng"]=copy.deepcopy(returned_node.longi)
+                temp_node["stopName"]=copy.deepcopy(returned_node.name)
+                path_dets.append(temp_node)
+            
+            temp_dict["yatayat"]=yatayat
+            temp_dict["vehicleTypes"]=vehicles
+            temp_dict["route"]=path_dets
+            temp_dict["details"]={"km":km,"change":change}
+            sorted_paths.append(temp_dict)
         
-    #     return sorted_paths
+        return sorted_paths
                     
 
 

@@ -53,3 +53,7 @@ class Edge(BaseModel):
     dest:int
     km:float
     route_no:int
+
+class ipRoute(BaseModel):
+    start:int
+    end:int
