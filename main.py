@@ -28,7 +28,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 models.Base.metadata.create_all(bind=engine)
 
-main_graph=graph.Graph()
+
 
 app = FastAPI()
 
@@ -136,6 +136,7 @@ async def register_user(user:schemas.RegisterData,db: Session = Depends(get_db))
 
 @app.post("/addroute")
 async def add_route(route_details:dict,db: Session = Depends(get_db)):
+    main_graph=graph.Graph(db)
     return main_graph.add_route(db,route_details["name"],route_details["yatayat"],route_details["vehicleTypes"],route_details["route"])
 
 # @app.post("/addnode")
@@ -149,10 +150,12 @@ async def add_route(route_details:dict,db: Session = Depends(get_db)):
 
 @app.get("/getnodes")
 async def get_nodes(db: Session = Depends(get_db)):
+    main_graph=graph.Graph(db)
     return main_graph.get_nodes(db)
 
 @app.post("/getroutes")
 async def get_routes(data:schemas.ipRoute,db: Session = Depends(get_db)):
+    main_graph=graph.Graph(db)
     # start:schemas.ipRoute,end:schemas.ipRoute
     # #input-> endpoint pairs
     # #decide u[] with start endpoints (1km radius maybe)

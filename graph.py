@@ -4,7 +4,8 @@ import crud
 
 class Node:
     node_id=0
-    def __init__(self,lati:str,longi:str,name:str):
+    def __init__(self,db:Session,lati:str,longi:str,name:str):
+        Node.node_id=len(crud.get_nodes(db))
         self.latitude=lati
         self.longitude=longi
         self.name=name
@@ -14,13 +15,11 @@ class Node:
 class Graph:
     route_no=1
     paths=[]
-    # def __init__(self):
-    #     self.adj_list={}
-    #     self.nodes=[]
-    #     self.coords=[]
+    def __init__(self,db:Session):
+        Graph.route_no=len(crud.get_all_routes(db))+1
 
     def add_node(self,lati:str,longi:str,name:str,db:Session):
-        node=Node(lati,longi,name)
+        node=Node(db,lati,longi,name)
         # self.nodes.append(node)
         # self.adj_list[node.node_id]=[]
         # self.coords.append((lati,longi))
@@ -186,7 +185,7 @@ class Graph:
                     temp_node["change"]=True
                 else:
                     temp_node["change"]=False
-                    
+
                 path_dets.append(temp_node)
             
             temp_dict["yatayat"]=yatayat
