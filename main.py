@@ -151,7 +151,7 @@ async def add_route(route_details:dict,db: Session = Depends(get_db)):
 async def get_nodes(db: Session = Depends(get_db)):
     return main_graph.get_nodes(db)
 
-@app.get("/getroutes")
+@app.post("/getroutes")
 async def get_routes(data:schemas.ipRoute,db: Session = Depends(get_db)):
     # start:schemas.ipRoute,end:schemas.ipRoute
     # #input-> endpoint pairs
