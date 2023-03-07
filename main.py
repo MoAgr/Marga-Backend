@@ -116,10 +116,9 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer","username":user.username,"email_address":user.email,"full_name":user.full_name}
 
-# @app.get("/print")
-# async def get_locations(db: Session = Depends(get_db)):
-#     locations=crud.get_items(db)
-#     return locations
+@app.get("/test")
+async def get_locations():
+    return "Hello"
 
 # @app.post("/create")
 # async def create_location(loc:schemas.Data,db: Session = Depends(get_db)):
