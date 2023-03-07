@@ -204,19 +204,20 @@ class Graph:
         all_routes=[]
         total_routes=crud.route_details_no(db)
         all_adjlists=crud.get_graph(db)
-        all_nodes=crud.get_nodes(db)
         all_route_details=crud.get_all_routes(db)
 
-        for i in range(1,total_routes+1):
+        for i in range(1,total_routes+1): #change this pachi
             temp_route={}
             temp_nodes=[]
             for adjlist in all_adjlists:
                 node_id=adjlist.node_id
-                node_id_str=str(node_id)
                 connections=next(iter(adjlist.adj_list.values()))
                 for connection in connections:
                     if connection[-1]==i and connection[0]>node_id:
-                        temp_nodes.append(crud.get_node(db,connection[0]))
+                        if(len(temp_nodes)==0):
+                            temp_nodes.append(crud.get_node(db,node_id))
+                        else:
+                            temp_nodes.append(crud.get_node(db,connection[0]))
 
             # route_dets=crud.get_route_details(db,)
             temp_route["route"]=temp_nodes
