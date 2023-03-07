@@ -4,8 +4,8 @@ from sqlalchemy.orm import sessionmaker
 
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 # SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:admin@127.0.0.1:3306/testdb"
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:MyTfNLSdyPD2h8NWKHrh@containers-us-west-191.railway.app:6947/railway"
-# SQLALCHEMY_DATABASE_URL = "mysql+pymysql://doadmin:AVNS_RsOu7BRqMpz4DoJFOKH@marga-db-do-user-13601110-0.b.db.ondigitalocean.com:25060/marga-db"
+# SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:MyTfNLSdyPD2h8NWKHrh@containers-us-west-191.railway.app:6947/railway"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://mohit:AVNS_tqgc75tF7cBJWTXXUHr@marga-db-do-user-13601110-0.b.db.ondigitalocean.com:25060/defaultdb"
 # mysql://root:MyTfNLSdyPD2h8NWKHrh@containers-us-west-191.railway.app:6947/railway
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)

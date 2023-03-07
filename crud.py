@@ -116,5 +116,8 @@ def add_route_details(db:Session,route_no,name,yatayat,vehicle_types):
 def get_route_details(db:Session,route_no):
     return db.query(models.RouteDetails).filter(models.RouteDetails.route_id == route_no).first()
 
+def route_details_no(db:Session):
+    return db.query(models.RouteDetails).count()
+
 def get_all_routes(db:Session,skip: int = 0, limit: int = 100):
     return db.query(models.RouteDetails).offset(skip).limit(limit).all()

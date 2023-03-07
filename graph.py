@@ -200,6 +200,34 @@ class Graph:
         # print("get_sorted_paths",sorted_paths)
         return sorted_paths
                     
+    def get_all_routes(db:Session):
+        all_routes=[]
+        total_routes=crud.route_details_no(db)
+        all_adjlists=crud.get_graph(db)
+        all_nodes=crud.get_nodes(db)
+        all_route_details=crud.get_all_routes(db)
+
+        for i in range(1,total_routes+1):
+            temp_route={}
+            temp_nodes=[]
+            for adjlist in all_adjlists:
+                node_id=adjlist["node_id"]
+                node_id_str=str(node_id)
+                connections=adjlist["adj_list"][node_id_str]
+                for connection in connections:
+                    if connection[-1]==i and connection[0]>node_id:
+                        temp_nodes.append(all_nodes)
+                        
+
+
+
+                
+
+
+
+
+
+
 
 
     

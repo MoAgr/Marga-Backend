@@ -114,7 +114,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = await create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer","username":user.username,"email_address":user.email,"full_name":user.full_name}
 
 # @app.get("/print")
 # async def get_locations(db: Session = Depends(get_db)):
@@ -188,6 +188,10 @@ async def get_routes(data:schemas.ipRoute,db: Session = Depends(get_db)):
     # return final_routes
     return main_graph.get_sorted_paths(db,data.start,data.end)
 
+@app.get("/getallroutes")
+async def get_all_routes(db: Session = Depends(get_db)):
+    # return graph.get_all_routes(db)
+    return crud.get_graph(db)
 
 
 # @app.post("/addedge")
