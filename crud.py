@@ -121,3 +121,8 @@ def route_details_no(db:Session):
 
 def get_all_routes(db:Session,skip: int = 0, limit: int = 100):
     return db.query(models.RouteDetails).offset(skip).limit(limit).all()
+
+def del_users(db:Session,user_id):
+    db.query(models.Userbase).filter(user_id==models.Userbase.id).delete(synchronize_session='auto')
+    db.commit()
+    return True

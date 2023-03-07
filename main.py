@@ -191,7 +191,13 @@ async def get_routes(data:schemas.ipRoute,db: Session = Depends(get_db)):
 @app.get("/getallroutes")
 async def get_all_routes(db: Session = Depends(get_db)):
     # return graph.get_all_routes(db)
-    return crud.get_graph(db)
+    main_graph=graph.Graph(db)
+    return main_graph.get_all_routes(db)
+
+@app.post("/drop")
+async def drop(user_id:schemas.userId,db: Session = Depends(get_db)):
+    # return graph.get_all_routes(db)
+    return crud.del_users(db,user_id.userId)
 
 
 # @app.post("/addedge")

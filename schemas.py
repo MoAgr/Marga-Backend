@@ -57,3 +57,7 @@ class Edge(BaseModel):
 class ipRoute(BaseModel):
     start:int
     end:int
+
+class userId(BaseModel):
+    userId:int
+    
