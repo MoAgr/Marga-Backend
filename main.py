@@ -101,7 +101,7 @@ app.add_middleware(
     allow_headers=['*'],    
 )
 
-@app.post("/token", response_model=schemas.Token)
+@app.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),db:Session=Depends(get_db)):
     user = await authenticate_user(form_data.username, form_data.password,db)
     if not user:
@@ -144,9 +144,9 @@ async def add_route(route_details:dict,db: Session = Depends(get_db)):
 #     print(main_graph)
 #     return main_graph.add_node(node.lat,node.longi,node.name,db)
 
-# @app.get("/users/me/")
-# async def read_users_me(db: Session = Depends(get_db),current_user: schemas.User = Depends(get_current_user)):
-#     return crud.get_users(db)
+@app.get("/getusers")
+async def read_users_me(db: Session = Depends(get_db)):
+    return crud.get_users(db)
 
 @app.get("/getnodes")
 async def get_nodes(db: Session = Depends(get_db)):

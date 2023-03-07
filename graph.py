@@ -216,7 +216,7 @@ class Graph:
                 connections=adjlist["adj_list"][node_id_str]
                 for connection in connections:
                     if connection[-1]==i and connection[0]>node_id:
-                        temp_nodes.append(all_nodes)
+                        temp_nodes.append(crud.get_node(db,connection[0]))
                         
 
 
