@@ -19,6 +19,7 @@ class Userbase(Base):
     email = Column(String(200),unique=True)
     full_name=Column(String(200))
     hashed_password=Column(String(200))
+    contributions=Column(Integer,default=0)
 
 class RouteDetails(Base):
     __tablename__ = "routedetails"
@@ -27,6 +28,8 @@ class RouteDetails(Base):
     name = Column(String(200))
     vehicle_types = Column(String(200))
     yatayat=Column(String(200))
+    upvotes=Column(Integer,default=0)
+    downvotes=Column(Integer,default=0)
 
 class Nodes(Base):
     __tablename__ = "nodes"

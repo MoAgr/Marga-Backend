@@ -73,7 +73,7 @@ async def create_access_token(data: dict, expires_delta: Union[timedelta, None] 
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(token: str = Depends(oauth2_scheme),db:Session=Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -87,7 +87,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         token_data = schemas.TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = await get_user(username=token_data.username)
+    user = await get_user(username=token_data.username,db=db)
     if user is None:
         raise credentials_exception
     return user
@@ -130,14 +130,14 @@ async def register_user(user:schemas.RegisterData,db: Session = Depends(get_db))
     pw=user.password
     hash_pw=await get_password_hash(pw)
 
-    user_actual=schemas.UserInDB(username=user.username,email=user.email,full_name=user.full_name,hashed_password=hash_pw)
+    user_actual=schemas.UserInDB(username=user.username,email=user.email,full_name=user.full_name,hashed_password=hash_pw,contributions=0)
 
     return crud.create_user(db,user_actual)
 
 @app.post("/addroute")
-async def add_route(route_details:dict,db: Session = Depends(get_db)):
+async def add_route(route_details:dict,db: Session = Depends(get_db),user:schemas.UserInDB=Depends(get_current_user)):
     main_graph=graph.Graph(db)
-    return main_graph.add_route(db,route_details["name"],route_details["yatayat"],route_details["vehicleTypes"],route_details["route"])
+    return main_graph.add_route(db,route_details["name"],route_details["yatayat"],route_details["vehicleTypes"],route_details["route"],user.username)
 
 # @app.post("/addnode")
 # async def add_node(node:schemas.Node,db: Session = Depends(get_db)):
@@ -198,6 +198,16 @@ async def get_all_routes(db: Session = Depends(get_db)):
 async def drop(user_id:schemas.userId,db: Session = Depends(get_db)):
     # return graph.get_all_routes(db)
     return crud.del_users(db,user_id.userId)
+
+@app.post("/vote")
+async def vote(vote:schemas.vote,db:Session=Depends(get_db)):
+    msg=vote.vote_type
+    if msg.strip().lower() == "upvote":
+        return crud.upvote(vote.route_id,db)
+    elif msg.strip().lower() == "downvote":
+        return crud.downvote(vote.route_id,db)
+    
+    return False
 
 
 # @app.post("/addedge")

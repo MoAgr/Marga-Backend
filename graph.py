@@ -50,11 +50,11 @@ class Graph:
         # self.adj_list[source_id].append((dest_id,km,route_no))
         # self.adj_list[dest_id].append((source_id,km,route_no))
 
-    def add_route(self,db:Session,name,yatayat,vehicle_types,route): 
+    def add_route(self,db:Session,name,yatayat,vehicle_types,route,username): 
         route_nodes=[]
         yatayat_str=','.join(yatayat)
         vehicle_str=','.join(vehicle_types)
-        crud.add_route_details(db,self.route_no,name,yatayat_str,vehicle_str)
+        crud.add_route_details(db,self.route_no,name,yatayat_str,vehicle_str,username)
         for curr_node in route:
             if crud.has_coord(db,curr_node["lat"],curr_node["lng"]):
                 route_nodes.append(crud.get_node_by_latlong(db,curr_node["lat"],curr_node["lng"]))
@@ -224,71 +224,8 @@ class Graph:
             temp_route["route_id"]=all_route_details[i-1].route_id
             temp_route["yatayat"]=all_route_details[i-1].yatayat
             temp_route["vehicleTypes"]=all_route_details[i-1].vehicle_types
+            temp_route["upvotes"]=all_route_details[i-1].upvotes
+            temp_route["downvotes"]=all_route_details[i-1].downvotes
             all_routes.append(temp_route)
 
         return all_routes
-
-
-                        
-
-
-
-                
-
-
-
-
-
-
-
-
-    
-# graph=Graph()
-
-# graph.add_route([{
-#       "name": "Naxal Bhagwati Bahal",
-#       "lat": "1.0",
-#       "long": "1.0"
-#     },
-#     {
-#       "name": "Tankeshwor Pul",
-#       "lat": "2.0",
-#       "long": "2.0"
-#     },
-#     {
-#       "name": "Pulchowk",
-#       "lat": "3.0",
-#       "long": "3.0"
-#     }])
-
-# graph.add_route([{
-#       "name": "Naxal Bhagwati Bahal",
-#       "lat": "1.0",
-#       "long": "1.0"
-#     },
-#     {
-#       "name": "Ratopul",
-#       "lat": "4.0",
-#       "long": "4.0"
-#     },
-#     {
-#       "name": "Chabahil",
-#       "lat": "5.0",
-#       "long": "5.0"
-#     }])
-
-# graph.add_route([
-#     {
-#       "name": "Chabahil",
-#       "lat": "5.0",
-#       "long": "5.0"
-#     },
-#     {
-#       "name": "Pulchowk",
-#       "lat": "3.0",
-#       "long": "3.0"
-#     }])
-
-# print(graph.get_nodes())
-# print(graph.get_graph())
-# print(graph.get_sorted_paths(0,2))

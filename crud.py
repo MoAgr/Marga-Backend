@@ -106,11 +106,28 @@ def update_adjlist(db:Session,node_id,new_adj_list):
     db.refresh(db_adj)
     return db_adj
 
-def add_route_details(db:Session,route_no,name,yatayat,vehicle_types):
+def update_contributions(db:Session,username):
+    # get the existing data
+    db_user = db.query(models.Userbase).filter(models.Userbase.username == username).first()
+    if db_user is None:
+        return None
+
+    old_contributions=db_user.contributions
+    # Update model class variable from requested fields 
+    setattr(db_user, "contributions", old_contributions+1)
+
+    db_user.modified = modified_now
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+def add_route_details(db:Session,route_no,name,yatayat,vehicle_types,username):
     db_route = models.RouteDetails(route_id=route_no,name=name,yatayat=yatayat,vehicle_types=vehicle_types)
     db.add(db_route)
     db.commit()
     db.flush()
+    update_contributions(db,username)
     return db_route
 
 def get_route_details(db:Session,route_no):
@@ -126,3 +143,37 @@ def del_users(db:Session,user_id):
     db.query(models.Userbase).filter(user_id==models.Userbase.id).delete(synchronize_session='auto')
     db.commit()
     return True
+
+def upvote(route_id,db:Session):
+    # get the existing data
+    db_route = db.query(models.RouteDetails).filter(models.RouteDetails.route_id == route_id).first()
+    if db_route is None:
+        return None
+
+    old_upvotes=db_route.upvotes
+
+    # Update model class variable from requested fields 
+    setattr(db_route, "upvotes", old_upvotes+1)
+
+    db_route.modified = modified_now
+    db.add(db_route)
+    db.commit()
+    db.refresh(db_route)
+    return db_route
+
+def downvote(route_id,db:Session):
+    # get the existing data
+    db_route = db.query(models.RouteDetails).filter(models.RouteDetails.route_id == route_id).first()
+    if db_route is None:
+        return None
+
+    old_downvotes=db_route.downvotes
+
+    # Update model class variable from requested fields 
+    setattr(db_route, "downvotes", old_downvotes+1)
+
+    db_route.modified = modified_now
+    db.add(db_route)
+    db.commit()
+    db.refresh(db_route)
+    return db_route

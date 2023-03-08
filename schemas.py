@@ -33,6 +33,7 @@ class User(BaseModel):
     username: str
     email: Union[str, None] = None
     full_name: Union[str, None] = None
+    contributions:int
 
 
 class UserInDB(User):
@@ -61,3 +62,6 @@ class ipRoute(BaseModel):
 class userId(BaseModel):
     userId:int
     
+class vote(BaseModel):
+    route_id:int
+    vote_type:str
