@@ -177,3 +177,8 @@ def downvote(route_id,db:Session):
     db.commit()
     db.refresh(db_route)
     return db_route
+
+def del_route_details(route_id,db:Session):
+    db.query(models.RouteDetails).filter(route_id==models.RouteDetails.route_id).delete(synchronize_session='auto')
+    db.commit()
+    return True

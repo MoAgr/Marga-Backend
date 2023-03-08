@@ -198,6 +198,11 @@ async def vote(vote:schemas.vote,db:Session=Depends(get_db)):
     
     return False
 
-# @app.get("/getadjlist")
-# async def get_adj(db: Session = Depends(get_db)):
-#    return crud.get_graph(db)
+@app.post("/deleteroute")
+async def del_route(route_dets:dict,db:Session=Depends(get_db)):
+    main_graph=graph.Graph(db)
+    return main_graph.del_route(route_dets["route_id"],db)
+
+@app.get("/getadjlist")
+async def get_adj(db: Session = Depends(get_db)):
+   return crud.get_graph(db)

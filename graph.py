@@ -206,21 +206,21 @@ class Graph:
         all_adjlists=crud.get_graph(db)
         all_route_details=crud.get_all_routes(db)
 
-        for i in range(1,total_routes+1): #change this pachi
+        for i in range(1,total_routes+1):
             temp_route={}
             temp_nodes=[]
+            temp_route_no=all_route_details[i-1].route_id
             for adjlist in all_adjlists:
                 node_id=adjlist.node_id
                 connections=next(iter(adjlist.adj_list.values()))
                 for connection in connections:
-                    if connection[-1]==i and connection[0]>node_id:
+                    if connection[-1]==temp_route_no and connection[0]>node_id:
                         if(len(temp_nodes)==0):
                             temp_nodes.append(crud.get_node(db,node_id))
                             temp_nodes.append(crud.get_node(db,connection[0]))
                         else:
                             temp_nodes.append(crud.get_node(db,connection[0]))
 
-            # route_dets=crud.get_route_details(db,)
             temp_route["route"]=temp_nodes
             temp_route["route_id"]=all_route_details[i-1].route_id
             temp_route["yatayat"]=all_route_details[i-1].yatayat
@@ -230,3 +230,20 @@ class Graph:
             all_routes.append(temp_route)
 
         return all_routes
+
+    def del_route(self,route_id,db:Session):
+        all_adjlists=crud.get_graph(db)
+
+        for adjlist in all_adjlists:
+            temp_conn=[]
+            node_id=adjlist.node_id
+            connections=next(iter(adjlist.adj_list.values()))
+            for connection in connections:
+                if connection[-1]==route_id:
+                    pass
+                else:
+                    temp_conn.append(connection)
+            
+            crud.update_adjlist(db,node_id,{node_id:temp_conn})
+        
+        return crud.del_route_details(route_id,db)
