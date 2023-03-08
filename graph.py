@@ -216,6 +216,7 @@ class Graph:
                     if connection[-1]==i and connection[0]>node_id:
                         if(len(temp_nodes)==0):
                             temp_nodes.append(crud.get_node(db,node_id))
+                            temp_nodes.append(crud.get_node(db,connection[0]))
                         else:
                             temp_nodes.append(crud.get_node(db,connection[0]))
 

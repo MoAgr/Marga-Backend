@@ -28,8 +28,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 models.Base.metadata.create_all(bind=engine)
 
-
-
 app = FastAPI()
 
 
@@ -116,15 +114,6 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer","username":user.username,"email_address":user.email,"full_name":user.full_name}
 
-# @app.get("/print")
-# async def get_locations(db: Session = Depends(get_db)):
-#     locations=crud.get_items(db)
-#     return locations
-
-# @app.post("/create")
-# async def create_location(loc:schemas.Data,db: Session = Depends(get_db)):
-#     return crud.create_entry(db,loc)
-
 @app.post("/register")
 async def register_user(user:schemas.RegisterData,db: Session = Depends(get_db)):
     pw=user.password
@@ -209,11 +198,6 @@ async def vote(vote:schemas.vote,db:Session=Depends(get_db)):
     
     return False
 
-
-# @app.post("/addedge")
-# async def add_edge(edge:schemas.Edge,db: Session = Depends(get_db)):
-#     return main_graph.add_edge(db,edge.source,edge.dest,edge.km,edge.route_no)
-
 # @app.get("/getadjlist")
 # async def get_adj(db: Session = Depends(get_db)):
-#    return crud.get_adjlist(db,1)
+#    return crud.get_graph(db)
