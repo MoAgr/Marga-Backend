@@ -114,6 +114,10 @@ app.add_middleware(
     allow_headers=['*'],    
 )
 
+@app.get("/test")
+async def get_locations():
+    return "Testing new server"
+
 @app.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),db:Session=Depends(get_db)):
     user = await authenticate_user(form_data.username, form_data.password,db)
