@@ -1,5 +1,5 @@
 from typing import List, Union
-from pydantic import BaseModel
+from pydantic import BaseModel,ValidationError
 
 class Data(BaseModel):
     name:str
@@ -27,6 +27,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Union[str, None] = None
+    scopes:List[str]=[]
 
 
 class User(BaseModel):
@@ -38,6 +39,7 @@ class User(BaseModel):
 
 class UserInDB(User):
     hashed_password: str
+    roles:dict
 
 class AddRouteData(BaseModel):
     name:str

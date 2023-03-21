@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 from typing import Union
-from fastapi import FastAPI,Depends,HTTPException,status
-from pydantic import BaseModel
+from fastapi import FastAPI,Depends,HTTPException,status,Security
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm,SecurityScopes
+from pydantic import BaseModel,ValidationError
+from typing_extensions import Annotated
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
@@ -24,7 +25,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token",
+                                     scopes={"user":"Basic User.","admin":"Admin Privileges."})
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -71,7 +73,12 @@ async def create_access_token(data: dict, expires_delta: Union[timedelta, None] 
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme),db:Session=Depends(get_db)):
+async def get_current_user(security_scopes:SecurityScopes,token: str = Depends(oauth2_scheme),db:Session=Depends(get_db)):
+    if security_scopes.scopes:
+        authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
+    else:
+        authenticate_value = "Bearer"
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -82,12 +89,20 @@ async def get_current_user(token: str = Depends(oauth2_scheme),db:Session=Depend
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = schemas.TokenData(username=username)
-    except JWTError:
+        token_scopes = payload.get("scopes", [])
+        token_data = schemas.TokenData(scopes=token_scopes, username=username)
+    except (JWTError,ValidationError):
         raise credentials_exception
     user = await get_user(username=token_data.username,db=db)
     if user is None:
         raise credentials_exception
+    for scope in security_scopes.scopes:
+        if scope not in token_data.scopes:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not enough permissions",
+                headers={"WWW-Authenticate": authenticate_value},
+            )
     return user
 
 
@@ -110,9 +125,9 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = await create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.username,"scopes": user.roles["roles"]}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer","username":user.username,"email_address":user.email,"full_name":user.full_name}
+    return {"access_token": access_token, "token_type": "bearer","username":user.username,"email_address":user.email,"full_name":user.full_name,"roles":user.roles}
 
 @app.post("/register")
 async def register_user(user:schemas.RegisterData,db: Session = Depends(get_db)):
@@ -126,7 +141,10 @@ async def register_user(user:schemas.RegisterData,db: Session = Depends(get_db))
 @app.post("/addroute")
 async def add_route(route_details:dict,db: Session = Depends(get_db),user:schemas.UserInDB=Depends(get_current_user)):
     main_graph=graph.Graph(db)
-    return main_graph.add_route(db,route_details["name"],route_details["yatayat"],route_details["vehicleTypes"],route_details["route"],user.username)
+    if("admin" in user.roles["roles"]):
+        return main_graph.add_route(db,route_details["name"],route_details["yatayat"],route_details["vehicleTypes"],route_details["route"],user.username,route_details["geojson"],True)
+    else:
+        return main_graph.add_route(db,route_details["name"],route_details["yatayat"],route_details["vehicleTypes"],route_details["route"],user.username,route_details["geojson"])
 
 # @app.post("/addnode")
 # async def add_node(node:schemas.Node,db: Session = Depends(get_db)):
@@ -199,10 +217,14 @@ async def vote(vote:schemas.vote,db:Session=Depends(get_db)):
     return False
 
 @app.post("/deleteroute")
-async def del_route(route_dets:dict,db:Session=Depends(get_db)):
+async def del_route(route_dets:dict,user:schemas.UserInDB=Security(get_current_user,scopes=["admin"]),db:Session=Depends(get_db)):
     main_graph=graph.Graph(db)
     return main_graph.del_route(route_dets["route_id"],db)
 
 @app.get("/getadjlist")
 async def get_adj(db: Session = Depends(get_db)):
    return crud.get_graph(db)
+
+@app.post("/approve")
+async def approve_route(route_dets:dict,user:schemas.UserInDB=Security(get_current_user,scopes=["admin"]),db:Session=Depends(get_db)):
+    return crud.approve(route_dets["route_id"],db)

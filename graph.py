@@ -50,11 +50,11 @@ class Graph:
         # self.adj_list[source_id].append((dest_id,km,route_no))
         # self.adj_list[dest_id].append((source_id,km,route_no))
 
-    def add_route(self,db:Session,name,yatayat,vehicle_types,route,username): 
+    def add_route(self,db:Session,name,yatayat,vehicle_types,route,username,geojson,approved=False): 
         route_nodes=[]
         yatayat_str=','.join(yatayat)
         vehicle_str=','.join(vehicle_types)
-        crud.add_route_details(db,self.route_no,name,yatayat_str,vehicle_str,username)
+        crud.add_route_details(db,self.route_no,name,yatayat_str,vehicle_str,username,geojson,approved)
         for curr_node in route:
             if crud.has_coord(db,curr_node["lat"],curr_node["lng"]):
                 route_nodes.append(crud.get_node_by_latlong(db,curr_node["lat"],curr_node["lng"]))
@@ -152,6 +152,7 @@ class Graph:
             yatayat=[]
             vehicles=[]
             changes=[]
+            geojsons=[]
             for pos in range(len(path)-1):
                 km+=self.find_km(db,path[pos],path[pos+1])
                 route_no=self.get_route_no(db,path[pos],path[pos+1])
@@ -177,6 +178,7 @@ class Graph:
 
                 yatayat.append(yatayat_lst)
                 vehicles.append(vehicles_lst)
+                geojsons.append(route_det_json.geojson)
 
             for node_id in path:
                 returned_node=crud.get_node(db,node_id)
@@ -195,6 +197,7 @@ class Graph:
             temp_dict["vehicleTypes"]=vehicles
             temp_dict["route"]=path_dets
             temp_dict["details"]={"km":km,"change":change}
+            temp_dict["geojsons"]=geojsons
             sorted_paths.append(temp_dict)
         
         # print("get_sorted_paths",sorted_paths)
@@ -227,6 +230,8 @@ class Graph:
             temp_route["vehicleTypes"]=all_route_details[i-1].vehicle_types
             temp_route["upvotes"]=all_route_details[i-1].upvotes
             temp_route["downvotes"]=all_route_details[i-1].downvotes
+            temp_route["approved"]=all_route_details[i-1].approved
+            temp_route["geojson"]=all_route_details[i-1].geojson
             all_routes.append(temp_route)
 
         return all_routes

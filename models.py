@@ -1,4 +1,4 @@
-from sqlalchemy import Column, FetchedValue, Integer, String,JSON,Float
+from sqlalchemy import Column, FetchedValue, Integer, String,JSON,Float,Boolean
 from sqlalchemy.ext.mutable import MutableList
 
 from database import Base
@@ -20,6 +20,7 @@ class Userbase(Base):
     full_name=Column(String(200))
     hashed_password=Column(String(200))
     contributions=Column(Integer,default=0)
+    roles=Column(JSON) #role:[roles...]
 
 class RouteDetails(Base):
     __tablename__ = "routedetails"
@@ -30,6 +31,8 @@ class RouteDetails(Base):
     yatayat=Column(String(200))
     upvotes=Column(Integer,default=0)
     downvotes=Column(Integer,default=0)
+    geojson=Column(JSON)
+    approved=Column(Boolean,default=False)
 
 class Nodes(Base):
     __tablename__ = "nodes"

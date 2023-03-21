@@ -30,7 +30,7 @@ def create_user(db: Session, user: schemas.UserInDB):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Email already exists.",
         )
-    db_user = models.Userbase(username=user.username, email=user.email,full_name=user.full_name,hashed_password=user.hashed_password)
+    db_user = models.Userbase(username=user.username, email=user.email,full_name=user.full_name,hashed_password=user.hashed_password,roles={"roles":["user"]})
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -122,8 +122,8 @@ def update_contributions(db:Session,username):
     db.refresh(db_user)
     return db_user
 
-def add_route_details(db:Session,route_no,name,yatayat,vehicle_types,username):
-    db_route = models.RouteDetails(route_id=route_no,name=name,yatayat=yatayat,vehicle_types=vehicle_types)
+def add_route_details(db:Session,route_no,name,yatayat,vehicle_types,username,geojson,approved=False):
+    db_route = models.RouteDetails(route_id=route_no,name=name,yatayat=yatayat,vehicle_types=vehicle_types,geojson=geojson,approved=approved)
     db.add(db_route)
     db.commit()
     db.flush()
@@ -182,3 +182,18 @@ def del_route_details(route_id,db:Session):
     db.query(models.RouteDetails).filter(route_id==models.RouteDetails.route_id).delete(synchronize_session='auto')
     db.commit()
     return True
+
+def approve(route_id,db:Session):
+    # get the existing data
+    db_routes = db.query(models.RouteDetails).filter(models.RouteDetails.route_id == route_id).first()
+    if db_routes is None:
+        return None
+
+    # Update model class variable from requested fields 
+    setattr(db_routes, "approved", True)
+
+    db_routes.modified = modified_now
+    db.add(db_routes)
+    db.commit()
+    db.refresh(db_routes)
+    return db_routes
