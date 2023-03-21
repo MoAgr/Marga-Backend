@@ -134,7 +134,7 @@ async def register_user(user:schemas.RegisterData,db: Session = Depends(get_db))
     pw=user.password
     hash_pw=await get_password_hash(pw)
 
-    user_actual=schemas.UserInDB(username=user.username,email=user.email,full_name=user.full_name,hashed_password=hash_pw,contributions=0)
+    user_actual=schemas.UserInDB(username=user.username,email=user.email,full_name=user.full_name,hashed_password=hash_pw,contributions=0,roles={})
 
     return crud.create_user(db,user_actual)
 
