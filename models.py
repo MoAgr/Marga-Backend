@@ -25,7 +25,7 @@ class Userbase(Base):
 class RouteDetails(Base):
     __tablename__ = "routedetails"
 
-    route_id = Column(Integer, primary_key=True)
+    route_id = Column(Integer, primary_key=True,autoincrement=True)
     name = Column(String(200))
     vehicle_types = Column(String(200))
     yatayat=Column(String(200))

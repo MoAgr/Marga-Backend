@@ -13,10 +13,8 @@ class Node:
         Node.node_id=Node.node_id+1 
 
 class Graph:
-    route_no=1
     paths=[]
     def __init__(self,db:Session):
-        Graph.route_no=len(crud.get_all_routes(db))+1
         Graph.paths=[]
 
     def add_node(self,lati:str,longi:str,name:str,db:Session):
@@ -54,7 +52,7 @@ class Graph:
         route_nodes=[]
         yatayat_str=','.join(yatayat)
         vehicle_str=','.join(vehicle_types)
-        crud.add_route_details(db,Graph.route_no,name,yatayat_str,vehicle_str,username,geojson,approved)
+        crud.add_route_details(db,name,yatayat_str,vehicle_str,username,geojson,approved)
         for curr_node in route:
             if crud.has_coord(db,curr_node["lat"],curr_node["lng"]):
                 route_nodes.append(crud.get_node_by_latlong(db,curr_node["lat"],curr_node["lng"]))
@@ -66,9 +64,7 @@ class Graph:
                 route_nodes.append(self.add_node(curr_node["lat"],curr_node["lng"],curr_node["stopName"],db))
         
         for pos in range(len(route_nodes)-1):
-            self.add_edge(db,route_nodes[pos].node_id,route_nodes[pos+1].node_id,pos,self.route_no) # ?change km to data received from api between this and next node or get km data in each node
-
-        Graph.route_no+=1
+            self.add_edge(db,route_nodes[pos].node_id,route_nodes[pos+1].node_id,pos,crud.get_route_no(db)) # ?change km to data received from api between this and next node or get km data in each node
 
     def get_nodes(self,db:Session):
         return crud.get_nodes(db)

@@ -122,8 +122,8 @@ def update_contributions(db:Session,username):
     db.refresh(db_user)
     return db_user
 
-def add_route_details(db:Session,route_no,name,yatayat,vehicle_types,username,geojson,approved=False):
-    db_route = models.RouteDetails(route_id=route_no,name=name,yatayat=yatayat,vehicle_types=vehicle_types,geojson=geojson,approved=approved)
+def add_route_details(db:Session,name,yatayat,vehicle_types,username,geojson,approved=False):
+    db_route = models.RouteDetails(name=name,yatayat=yatayat,vehicle_types=vehicle_types,geojson=geojson,approved=approved)
     db.add(db_route)
     db.commit()
     db.flush()
@@ -197,3 +197,7 @@ def approve(route_id,db:Session):
     db.commit()
     db.refresh(db_routes)
     return db_routes
+
+def get_route_no(db:Session):
+    db_routes=db.query(models.RouteDetails).order_by(models.RouteDetails.route_id.desc()).first()
+    return db_routes.route_id
