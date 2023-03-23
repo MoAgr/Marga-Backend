@@ -56,10 +56,10 @@ class Graph:
         for curr_node in route:
             if crud.has_coord(db,curr_node["lat"],curr_node["lng"]):
                 route_nodes.append(crud.get_node_by_latlong(db,curr_node["lat"],curr_node["lng"]))
-            elif crud.get_node_in_range(db,(curr_node["lat"]-0.0002,curr_node["lat"]+0.0002),
-                                        (curr_node["lng"]-0.0002,curr_node["lng"]+0.0002)):
-                route_nodes.append(crud.get_node_in_range(db,(curr_node["lat"]-0.0002,curr_node["lat"]+0.0002),
-                                        (curr_node["lng"]-0.0002,curr_node["lng"]+0.0002)))
+            elif crud.get_node_in_range(db,(curr_node["lat"]-0.0004,curr_node["lat"]+0.0004),
+                                        (curr_node["lng"]-0.0004,curr_node["lng"]+0.0004)):
+                route_nodes.append(crud.get_node_in_range(db,(curr_node["lat"]-0.0004,curr_node["lat"]+0.0004),
+                                        (curr_node["lng"]-0.0004,curr_node["lng"]+0.0004)))
             else:
                 route_nodes.append(self.add_node(curr_node["lat"],curr_node["lng"],curr_node["stopName"],db))
         
