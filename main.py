@@ -21,7 +21,7 @@ from database import SessionLocal, engine
 # openssl rand -hex 32
 SECRET_KEY = "82969e5c75f06ad7be575ee2d5ee977dbed4bd99ec2be7fe0dbd06228826e539"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 300
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
