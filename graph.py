@@ -232,6 +232,7 @@ class Graph:
             temp_route["downvotes"]=all_route_details[i-1].downvotes
             temp_route["approved"]=all_route_details[i-1].approved
             temp_route["geojson"]=all_route_details[i-1].geojson
+            temp_route["name"]=all_route_details[i-1].name
             all_routes.append(temp_route)
 
         return all_routes
